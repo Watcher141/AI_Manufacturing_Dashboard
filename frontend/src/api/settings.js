@@ -1,7 +1,7 @@
-import api from './axios';
+import api from './client';
 
 export const clearData = async () => {
-  const response = await api.post('/settings/clear-data');
+  const response = await api.post('/api/settings/clear-data');
   return response.data;
 };
 
@@ -9,7 +9,7 @@ export const uploadData = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   
-  const response = await api.post('/settings/upload-data', formData, {
+  const response = await api.post('/api/settings/upload-data', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -18,6 +18,6 @@ export const uploadData = async (file) => {
 };
 
 export const retrainModels = async () => {
-  const response = await api.post('/settings/retrain-models');
+  const response = await api.post('/api/settings/retrain-models');
   return response.data;
 };
