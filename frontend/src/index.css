@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Space+Grotesk:wght@300..700&display=swap');
+
+:root {
+  /* Colors from DESIGN.md */
+  --color-primary: #150f23;
+  --color-ink-deep: #1f1633;
+  --color-on-primary: #ffffff;
+  --color-accent-lime: #c2ef4e;
+  --color-accent-pink: #fa7faa;
+  --color-accent-violet: #6a5fc1;
+  --color-accent-violet-deep: #422082;
+  --color-accent-violet-mid: #79628c;
+  
+  --color-canvas-dark: #1f1633;
+  --color-canvas-light: #ffffff;
+  --color-surface-night: #150f23;
+  --color-surface-press-light: #f0f0f0;
+  --color-surface-press-stronger: #efefef;
+  
+  --color-hairline-violet: #362d59;
+  --color-hairline-cool: #cfcfdb;
+  --color-hairline-cloud: #e5e7eb;
+  
+  --color-ink: #1f1633;
+  --color-ink-press: #1a1a1a;
+  --color-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --color-on-dark-faint: rgba(255, 255, 255, 0.18);
+  --color-ring-focus: rgba(59, 130, 246, 0.5);
+
+  /* Typography families */
+  --font-display: 'Space Grotesk', 'Rubik', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Rubik', -apple-system, system-ui, sans-serif;
+  --font-code: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+
+  /* Spacing */
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-section: 96px;
+
+  /* Border Radius */
+  --rounded-xs: 4px;
+  --rounded-sm: 6px;
+  --rounded-md: 8px;
+  --rounded-lg: 10px;
+  --rounded-xl: 12px;
+  --rounded-xxl: 18px;
+  --rounded-full: 9999px;
+
+  /* Shadows & Elevation */
+  --shadow-level1: rgba(0, 0, 0, 0.08) 0 2px 8px 0;
+  --shadow-level2: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.1) 0 4px 6px -4px;
+  --shadow-level3: #150f23 0 0 8px 6px;
+  --shadow-level4: rgba(0, 0, 0, 0.18) 0 8px 24px 0;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--color-canvas-dark);
+  color: var(--color-on-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+code, pre {
+  font-family: var(--font-code);
+  font-size: 0.95rem;
+}
+
+a {
+  color: var(--color-accent-violet);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-canvas-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline-violet);
+  border-radius: var(--rounded-xs);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-violet-mid);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulseBorder {
+  0% { border-color: var(--color-hairline-violet); }
+  50% { border-color: var(--color-accent-lime); }
+  100% { border-color: var(--color-hairline-violet); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Starfield texture layer helper */
+.starfield-bg {
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 50px 160px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 80px 120px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 110px 80px, #eee, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 150px 30px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 200px 180px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 220px 110px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 250px 250px;
+  opacity: 0.15;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
