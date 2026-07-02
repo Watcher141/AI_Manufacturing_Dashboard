@@ -20,11 +20,22 @@ class Settings(BaseSettings):
     @property
     def async_database_url(self) -> str:
         url = self.DATABASE_URL
-        # SQLite support or PostgreSQL automatic async prefixing
-        if url.startswith("postgresql://"):
-            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
         if url.startswith("sqlite:///"):
             return url.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
+        
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            
+        if "postgresql+asyncpg://" in url:
+            from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
+            parsed = urlparse(url)
+            if parsed.query:
+                query_params = dict(parse_qsl(parsed.query))
+                query_params.pop("sslmode", None)
+                query_params.pop("channel_binding", None)
+                new_query = urlencode(query_params)
+                parsed = parsed._replace(query=new_query)
+                return urlunparse(parsed)
         return url
 
     @property
