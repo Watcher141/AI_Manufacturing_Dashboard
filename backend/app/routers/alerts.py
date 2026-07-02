@@ -8,6 +8,7 @@ from typing import Optional
 from app.database import get_db
 from app.models.alert import Alert
 from app.models.equipment import Equipment
+from app.auth_deps import require_admin
 
 router = APIRouter(prefix="/api/alerts", tags=["Alerts"])
 
@@ -90,7 +91,11 @@ async def get_alert_counts(db: AsyncSession = Depends(get_db)):
 
 
 @router.patch("/{alert_id}/read")
-async def mark_alert_read(alert_id: int, db: AsyncSession = Depends(get_db)):
+async def mark_alert_read(
+    alert_id: int,
+    db: AsyncSession = Depends(get_db),
+    _admin: str = Depends(require_admin),
+):
     """Mark an alert as read."""
     result = await db.execute(select(Alert).where(Alert.id == alert_id))
     alert = result.scalar_one_or_none()
@@ -102,7 +107,10 @@ async def mark_alert_read(alert_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.patch("/read-all")
-async def mark_all_read(db: AsyncSession = Depends(get_db)):
+async def mark_all_read(
+    db: AsyncSession = Depends(get_db),
+    _admin: str = Depends(require_admin),
+):
     """Mark all alerts as read."""
     await db.execute(update(Alert).where(Alert.is_read == False).values(is_read=True))
     await db.flush()
@@ -110,7 +118,11 @@ async def mark_all_read(db: AsyncSession = Depends(get_db)):
 
 
 @router.patch("/{alert_id}/dismiss")
-async def dismiss_alert(alert_id: int, db: AsyncSession = Depends(get_db)):
+async def dismiss_alert(
+    alert_id: int,
+    db: AsyncSession = Depends(get_db),
+    _admin: str = Depends(require_admin),
+):
     """Dismiss an alert."""
     result = await db.execute(select(Alert).where(Alert.id == alert_id))
     alert = result.scalar_one_or_none()

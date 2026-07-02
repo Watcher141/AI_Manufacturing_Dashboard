@@ -13,6 +13,7 @@ from app.models.alert import Alert
 from app.schemas.equipment import (
     EquipmentResponse, EquipmentDetailResponse, SensorReadingCreate, SensorReadingResponse
 )
+from app.auth_deps import require_admin
 
 router = APIRouter(prefix="/api/equipment", tags=["Equipment"])
 
@@ -139,6 +140,7 @@ async def add_sensor_reading(
     equipment_id: int,
     reading: SensorReadingCreate,
     db: AsyncSession = Depends(get_db),
+    _admin: str = Depends(require_admin),
 ):
     """Ingest a new sensor reading."""
     equipment = await db.execute(select(Equipment).where(Equipment.id == equipment_id))

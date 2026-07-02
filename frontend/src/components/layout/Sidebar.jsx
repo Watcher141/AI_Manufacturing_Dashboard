@@ -10,9 +10,12 @@ import {
   Cpu, 
   ChevronLeft, 
   ChevronRight,
-  Factory
+  Factory,
+  ShieldCheck,
+  LogOut
 } from 'lucide-react';
 import useAppStore from '../../store/useAppStore';
+import useAuthStore from '../../store/useAuthStore';
 
 const Sidebar = () => {
   const { 
@@ -23,6 +26,8 @@ const Sidebar = () => {
     unreadAlertCount 
   } = useAppStore();
 
+  const { isAdmin, logout } = useAuthStore();
+
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'maintenance', label: 'Predictive Maintenance', icon: Wrench },
@@ -31,8 +36,21 @@ const Sidebar = () => {
     { id: 'equipment', label: 'Equipment', icon: Cpu },
     { id: 'alerts', label: 'Alerts', icon: Bell, count: unreadAlertCount },
     { id: 'ai_assistant', label: 'AI Assistant', icon: Bot },
-    { id: 'settings', label: 'Settings', icon: Settings },
   ];
+
+  // Only show Settings for admins
+  if (isAdmin) {
+    navItems.push({ id: 'settings', label: 'Settings', icon: Settings });
+  }
+
+  const handleAdminClick = async () => {
+    if (isAdmin) {
+      await logout();
+      setActivePage('dashboard');
+    } else {
+      setActivePage('admin_login');
+    }
+  };
 
   return (
     <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
@@ -64,6 +82,39 @@ const Sidebar = () => {
           );
         })}
       </nav>
+
+      {/* Admin login/logout at bottom */}
+      <div style={{ 
+        padding: 'var(--space-sm)', 
+        borderTop: '1px solid var(--color-hairline-violet)',
+        marginTop: 'auto' 
+      }}>
+        <div
+          className={`nav-item ${activePage === 'admin_login' ? 'active' : ''}`}
+          onClick={handleAdminClick}
+          style={isAdmin ? { color: 'var(--color-accent-lime)' } : {}}
+        >
+          {isAdmin ? <LogOut size={20} /> : <ShieldCheck size={20} />}
+          <span className="nav-label">
+            {isAdmin ? 'Logout Admin' : 'Admin Login'}
+          </span>
+          {isAdmin && !sidebarCollapsed && (
+            <span style={{
+              marginLeft: 'auto',
+              fontSize: '0.65rem',
+              fontWeight: 700,
+              padding: '2px 6px',
+              borderRadius: 'var(--rounded-full)',
+              background: 'rgba(194, 239, 78, 0.15)',
+              color: 'var(--color-accent-lime)',
+              border: '1px solid rgba(194, 239, 78, 0.3)',
+              letterSpacing: '0.05em',
+            }}>
+              ADMIN
+            </span>
+          )}
+        </div>
+      </div>
     </aside>
   );
 };

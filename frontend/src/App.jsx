@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useAppStore from './store/useAppStore';
+import useAuthStore from './store/useAuthStore';
 import Layout from './components/layout/Layout';
 
 // Pages
@@ -11,9 +12,22 @@ import EquipmentPage from './pages/Equipment';
 import AlertsPage from './pages/Alerts';
 import AIAssistant from './pages/AIAssistant';
 import SettingsPage from './pages/Settings';
+import AdminLogin from './pages/AdminLogin';
 
 function App() {
-  const { activePage } = useAppStore();
+  const { activePage, setActivePage } = useAppStore();
+  const { isAdmin, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth().catch(console.error);
+  }, [checkAuth]);
+
+  // Admin access guard for settings page
+  useEffect(() => {
+    if (activePage === 'settings' && !isAdmin) {
+      setActivePage('admin_login');
+    }
+  }, [activePage, isAdmin, setActivePage]);
 
   const renderPage = () => {
     switch (activePage) {
@@ -32,7 +46,9 @@ function App() {
       case 'ai_assistant':
         return <AIAssistant />;
       case 'settings':
-        return <SettingsPage />;
+        return isAdmin ? <SettingsPage /> : <AdminLogin />;
+      case 'admin_login':
+        return <AdminLogin />;
       default:
         return <Dashboard />;
     }

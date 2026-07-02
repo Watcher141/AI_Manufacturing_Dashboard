@@ -9,9 +9,11 @@ import PieChart from '../components/charts/PieChart';
 import Loader from '../components/ui/Loader';
 import { formatDate } from '../utils/formatters';
 import { ShieldAlert, Play, CheckCircle, HelpCircle } from 'lucide-react';
+import useAuthStore from '../store/useAuthStore';
 import './DefectDetection.css';
 
 const DefectDetection = () => {
+  const { isAdmin } = useAuthStore();
   const [defects, setDefects] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -89,21 +91,23 @@ const DefectDetection = () => {
       </div>
 
       {/* Manual scan trigger banner */}
-      <div className="scan-action-banner">
-        <div>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldAlert size={20} style={{ color: 'var(--color-accent-lime)' }} />
-            Run Quality Scan Audit
-          </h3>
-          <p style={{ color: 'var(--color-on-dark-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-            Triggers ML defect classification models on all active production lines immediately.
-          </p>
+      {isAdmin && (
+        <div className="scan-action-banner">
+          <div>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShieldAlert size={20} style={{ color: 'var(--color-accent-lime)' }} />
+              Run Quality Scan Audit
+            </h3>
+            <p style={{ color: 'var(--color-on-dark-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
+              Triggers ML defect classification models on all active production lines immediately.
+            </p>
+          </div>
+          <Button onClick={handleRunScan} disabled={scanning}>
+            <Play size={16} />
+            {scanning ? 'Auditing lines...' : 'Run Audit'}
+          </Button>
         </div>
-        <Button onClick={handleRunScan} disabled={scanning}>
-          <Play size={16} />
-          {scanning ? 'Auditing lines...' : 'Run Audit'}
-        </Button>
-      </div>
+      )}
 
       {/* Stats Summary Rows */}
       {stats && (
@@ -143,7 +147,11 @@ const DefectDetection = () => {
       <Card>
         <h3 className="dashboard-card-title">Active Fault Register</h3>
         <DataTable
-          headers={['Equipment', 'Type', 'Severity', 'Confidence', 'Detected At', 'Actions']}
+          headers={
+            isAdmin 
+              ? ['Equipment', 'Type', 'Severity', 'Confidence', 'Detected At', 'Actions']
+              : ['Equipment', 'Type', 'Severity', 'Confidence', 'Detected At']
+          }
           data={defects}
           renderRow={(d) => (
             <tr key={d.id}>
@@ -154,11 +162,13 @@ const DefectDetection = () => {
               </td>
               <td style={{ fontFamily: 'var(--font-code)' }}>{(d.confidence_score * 100).toFixed(1)}%</td>
               <td>{formatDate(d.timestamp)}</td>
-              <td>
-                <Button variant="ghost" onClick={() => handleResolve(d.id)} style={{ padding: '6px 12px' }}>
-                  <CheckCircle size={14} /> Resolve
-                </Button>
-              </td>
+              {isAdmin && (
+                <td>
+                  <Button variant="ghost" onClick={() => handleResolve(d.id)} style={{ padding: '6px 12px' }}>
+                    <CheckCircle size={14} /> Resolve
+                  </Button>
+                </td>
+              )}
             </tr>
           )}
         />

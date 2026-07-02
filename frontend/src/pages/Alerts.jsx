@@ -16,8 +16,10 @@ import {
   CheckCheck 
 } from 'lucide-react';
 import './Alerts.css';
+import useAuthStore from '../store/useAuthStore';
 
 const AlertsPage = () => {
+  const { isAdmin } = useAuthStore();
   const [alerts, setAlerts] = useState([]);
   const [counts, setCounts] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -138,7 +140,7 @@ const AlertsPage = () => {
           </select>
         </div>
 
-        {counts && counts.unread > 0 && (
+        {isAdmin && counts && counts.unread > 0 && (
           <Button variant="ghost" onClick={handleMarkAllRead}>
             <CheckCheck size={16} /> Mark all read
           </Button>
@@ -167,26 +169,28 @@ const AlertsPage = () => {
                 </div>
               </div>
 
-              <div className="alert-feed-actions">
-                {!alert.is_read && (
+              {isAdmin && (
+                <div className="alert-feed-actions">
+                  {!alert.is_read && (
+                    <button 
+                      onClick={() => handleMarkRead(alert.id)} 
+                      className="toggle-btn"
+                      title="Mark as read"
+                      style={{ color: 'var(--color-accent-lime)' }}
+                    >
+                      <Check size={18} />
+                    </button>
+                  )}
                   <button 
-                    onClick={() => handleMarkRead(alert.id)} 
+                    onClick={() => handleDismiss(alert.id)} 
                     className="toggle-btn"
-                    title="Mark as read"
-                    style={{ color: 'var(--color-accent-lime)' }}
+                    title="Dismiss alert"
+                    style={{ color: 'var(--color-accent-pink)' }}
                   >
-                    <Check size={18} />
+                    <Trash2 size={18} />
                   </button>
-                )}
-                <button 
-                  onClick={() => handleDismiss(alert.id)} 
-                  className="toggle-btn"
-                  title="Dismiss alert"
-                  style={{ color: 'var(--color-accent-pink)' }}
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
+                </div>
+              )}
             </div>
           ))
         ) : (

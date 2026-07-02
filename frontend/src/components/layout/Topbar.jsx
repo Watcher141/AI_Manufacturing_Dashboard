@@ -1,11 +1,13 @@
 import React from 'react';
 import useAppStore from '../../store/useAppStore';
 import useDashboardStore from '../../store/useDashboardStore';
-import { Bell, RefreshCw } from 'lucide-react';
+import useAuthStore from '../../store/useAuthStore';
+import { Bell, RefreshCw, Shield } from 'lucide-react';
 
 const Topbar = () => {
   const { activePage } = useAppStore();
   const { overview, fetchOverview, loading } = useDashboardStore();
+  const { isAdmin } = useAuthStore();
 
   const getPageTitle = () => {
     switch (activePage) {
@@ -17,6 +19,7 @@ const Topbar = () => {
       case 'alerts': return 'Alert Center';
       case 'ai_assistant': return 'AI Manufacturing Assistant';
       case 'settings': return 'System Settings';
+      case 'admin_login': return 'Admin Authentication';
       default: return 'Manufacturing Dashboard';
     }
   };
@@ -34,6 +37,13 @@ const Topbar = () => {
       <h1 className="topbar-title">{getPageTitle()}</h1>
 
       <div className="topbar-actions">
+        {isAdmin && (
+          <div className="status-pill" style={{ borderColor: 'rgba(194, 239, 78, 0.4)', background: 'rgba(194, 239, 78, 0.08)', color: 'var(--color-accent-lime)' }}>
+            <Shield size={14} />
+            <span style={{ fontWeight: 600, fontSize: '0.8rem' }}>Admin Session</span>
+          </div>
+        )}
+
         {overview && (
           <div className="status-summary">
             <div className="status-pill">

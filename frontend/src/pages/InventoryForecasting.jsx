@@ -17,9 +17,11 @@ import {
   Plus, 
   RotateCcw 
 } from 'lucide-react';
+import useAuthStore from '../store/useAuthStore';
 import './InventoryForecasting.css';
 
 const InventoryForecasting = () => {
+  const { isAdmin } = useAuthStore();
   const [items, setItems] = useState([]);
   const [overview, setOverview] = useState(null);
   const [alerts, setAlerts] = useState([]);
@@ -186,9 +188,11 @@ const InventoryForecasting = () => {
 
                     <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <span style={{ fontSize: '0.8rem', color: 'var(--color-accent-pink)', fontWeight: 600 }}>Order: +{alert.recommended_qty} units</span>
-                      <Button variant="ghost" onClick={() => handleRestock(alert.id, alert.recommended_qty)} style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
-                        <Plus size={12} /> Restock
-                      </Button>
+                      {isAdmin && (
+                        <Button variant="ghost" onClick={() => handleRestock(alert.id, alert.recommended_qty)} style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
+                          <Plus size={12} /> Restock
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))
@@ -247,9 +251,11 @@ const InventoryForecasting = () => {
                   <span style={{ fontSize: '0.85rem', color: 'var(--color-accent-pink)', fontWeight: 600 }}>
                     Recommended Quantity: {itemForecast.reorder_info.recommended_qty} units
                   </span>
-                  <Button variant="inverted" onClick={() => handleRestock(itemForecast.item_id, itemForecast.reorder_info.recommended_qty)}>
-                    <ShoppingCart size={14} /> Place Reorder
-                  </Button>
+                  {isAdmin && (
+                    <Button variant="inverted" onClick={() => handleRestock(itemForecast.item_id, itemForecast.reorder_info.recommended_qty)}>
+                      <ShoppingCart size={14} /> Place Reorder
+                    </Button>
+                  )}
                 </div>
               )}
             </Card>

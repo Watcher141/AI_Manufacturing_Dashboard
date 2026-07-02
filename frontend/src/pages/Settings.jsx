@@ -5,7 +5,10 @@ import { getAIStatus } from '../api/assistant';
 import { Settings, Save, ShieldAlert, Key, Sliders, Database } from 'lucide-react';
 import './Settings.css';
 
+import useAuthStore from '../store/useAuthStore';
+
 const SettingsPage = () => {
+  const { isAdmin } = useAuthStore();
   const [apiKey, setApiKey] = useState('');
   const [tempThreshold, setTempThreshold] = useState(80);
   const [vibeThreshold, setVibeThreshold] = useState(4.0);
@@ -14,10 +17,15 @@ const SettingsPage = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!isAdmin) return;
     getAIStatus()
       .then(setAiStatus)
       .catch(console.error);
-  }, []);
+  }, [isAdmin]);
+
+  if (!isAdmin) {
+    return null; // Let layout or App component handle redirect
+  }
 
   const handleSave = () => {
     setSaving(true);
